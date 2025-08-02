@@ -10,7 +10,7 @@ app = FastAPI()
 
 # Configure CORS
 origins = [
-    "http://localhost:3000", # Your React app's address
+    "http://localhost:3000",  # Your React app's address
 ]
 
 app.add_middleware(
@@ -29,19 +29,18 @@ class SuggestRequest(BaseModel):
 class PlaceCoords(BaseModel):
     title: str
     address: str
-    latitude: float | None # Latitude can be None if geocoding failed
-    longitude: float | None # Longitude can be None if geocoding failed
+    latitude: float | None
+    longitude: float | None
     summary: str
     image: str
     main_attraction: str
     best_time_to_visit: str
     visiting_hours: str
-    # Assuming 'wiki' might also be present but not strictly required for travel planning here
-    wiki: str | None = None # Added wiki as optional
+    wiki: str | None = None
 
 class TravelDetailsRequest(BaseModel):
     selectedPlaces: list[PlaceCoords]
-    startLocation: str # NEW: Add starting location to the request
+    startLocation: str
 
 @app.post("/api/suggest")
 async def suggest_places(req: SuggestRequest):
@@ -53,9 +52,7 @@ async def suggest_places(req: SuggestRequest):
 # --- Endpoint for Travel Details, powered by Gemini ---
 @app.post("/api/get-travel-details")
 async def get_travel_details(req: TravelDetailsRequest):
-    # Convert Pydantic models to plain dictionaries for the utility function
-    selected_places_data = [p.dict() for p in req.selectedPlaces] 
-    
+    selected_places_data = [p.dict() for p in req.selectedPlaces]
     print(f"Received request for travel details for {len(selected_places_data)} places from starting point: {req.startLocation}.")
 
     # Call the new Gemini-based travel planner with the start_location
