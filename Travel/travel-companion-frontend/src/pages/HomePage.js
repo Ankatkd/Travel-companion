@@ -6,6 +6,7 @@ import axios from "axios";
 import LoadingSpinner from "../components/LoadingSpinner";
 import CustomAlert from "../components/CustomAlert";
 import TravelBreakdown from "../components/TravelBreakdown";
+import { getApiBase } from "../apiBase";
 
 function HomePage() {
   const [location, setLocation] = useState("");
@@ -16,7 +17,7 @@ function HomePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [travelPlan, setTravelPlan] = useState(null);
-
+  const baseUrl = getApiBase();
   const handleSearch = async () => {
     if (!location.trim()) {
       setError("Please enter a location to search.");
@@ -28,7 +29,7 @@ function HomePage() {
     setSelectedPlaces([]);
     setTravelPlan(null);
     try {
-      const res = await axios.post("http://localhost:8086/api/suggest", {
+      const res = await axios.post(`${baseUrl}/api/suggest`, {
         address: location,
       });
       if (res.data.places && res.data.places.length > 0) {
@@ -83,7 +84,7 @@ function HomePage() {
     // For now, we'll simply pass the selected places as is.
 
     try {
-      const res = await axios.post("http://localhost:8086/api/get-travel-details", {
+      const res = await axios.post(`${baseUrl}/api/get-travel-details`, {
         selectedPlaces: optimizedPlaces,
         startLocation: startLocation, // Pass the user's specific starting location
         optimizationPreference: optimizationPreference, // Pass the optimization choice
